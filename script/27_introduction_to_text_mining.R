@@ -12,5 +12,22 @@ books <- gutenberg_works(title %in% titles) %>%
 
 str(books)
 
+head(books, n = 15)
+
 books %>% 
   distinct(title)
+
+books$text[31:40]
+
+all_text <- books %>%
+  unnest_tokens(word, text) %>%
+  anti_join(stop_words)
+
+all_text
+
+all_text %>%
+  filter(title == "The Time Machine") %>%
+  group_by(word) %>%
+  count(sort = TRUE) %>%
+  ungroup() %>%
+  top_n(10)
