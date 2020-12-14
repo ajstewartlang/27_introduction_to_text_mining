@@ -28,7 +28,6 @@ all_text
 all_text %>%
   filter(title == "The Time Machine") %>%
   count(word, sort = TRUE) %>%
-  ungroup() %>%
   top_n(10)
 
 all_text %>%
