@@ -27,7 +27,11 @@ all_text
 
 all_text %>%
   filter(title == "The Time Machine") %>%
-  group_by(word) %>%
-  count(sort = TRUE) %>%
+  count(word, sort = TRUE) %>%
   ungroup() %>%
+  top_n(10)
+
+all_text %>%
+  filter(title == "The War of the Worlds") %>%
+  count(word, sort = TRUE) %>%
   top_n(10)
