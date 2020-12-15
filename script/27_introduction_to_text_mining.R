@@ -34,3 +34,17 @@ all_text %>%
   filter(title == "The War of the Worlds") %>%
   count(word, sort = TRUE) %>%
   top_n(10)
+
+all_text %>%
+  filter(title == "The Time Machine") %>%
+  count(word, sort = TRUE) %>%
+  top_n(10) %>%
+  ggplot(aes(x = reorder(word, n), y = n, fill = word)) +
+  geom_col() +
+  coord_flip() +
+  guides(fill = FALSE) +
+  labs(x = "Word", y = "Count") +
+  theme_minimal()
+         
+
+
