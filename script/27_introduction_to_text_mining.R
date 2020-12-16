@@ -156,7 +156,7 @@ set.seed(1234)
 ggraph(bigram_graph, layout = "fr") +
   geom_edge_link(alpha = .25) +
   geom_node_point(alpha = .25) +
-  geom_node_text(aes(label = name), vjust = -.1, hjust = 1.25, size =3) +
+  geom_node_text(aes(label = name), vjust = -.1, hjust = 1.25, size = 3) +
   guides(size = FALSE) +
   xlim(10, 22) +
   theme_void() 
