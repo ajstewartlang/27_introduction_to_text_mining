@@ -1,6 +1,8 @@
 library(tidyverse)
 library(tidytext)
 library(gutenbergr)
+library(igraph)
+library(ggraph)
 
 # Reading in the content of the 4 books 
 
@@ -129,6 +131,34 @@ book_words_tf_idf %>%
   top_n(15, tf_idf) %>%
   ggplot(aes(x = reorder(word, tf_idf), y = tf_idf, fill = title)) +
   geom_col(show.legend = FALSE) +
-  labs(x = NULL, y = "tf_idf") +
+  labs(x = NULL, y = "Term Frequency-Inverse Document Frequency") +
+  coord_flip() +
   facet_wrap(~ title, ncol = 2, scales = "free") +
-  coord_flip()
+  theme(text = element_text(size = 8))
+
+ggsave("tf_idf.jpg", width = 7, height = 3.6)
+
+# n-gram tokenizing
+
+wotw_bigrams <- books %>% 
+  filter(title == "The War of the Worlds") %>%
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) %>%
+  separate(col = bigram, into = c("word1", "word2", sep = " ")) %>%
+  filter(!word1 %in% stop_words$word) %>%
+  filter(!word2 %in% stop_words$word) %>%
+  count(word1, word2, sort = TRUE)
+
+bigram_graph <- wotw_bigrams %>%
+  filter(n > 5) %>%
+  graph_from_data_frame()
+
+set.seed(1234)
+ggraph(bigram_graph, layout = "fr") +
+  geom_edge_link(alpha = .25) +
+  geom_node_point(alpha = .25) +
+  geom_node_text(aes(label = name), vjust = -.1, hjust = 1.25, size =3) +
+  guides(size = FALSE) +
+  xlim(10, 22) +
+  theme_void() 
+
+ggsave("network.jpg", width = 7, height = 3.6)
