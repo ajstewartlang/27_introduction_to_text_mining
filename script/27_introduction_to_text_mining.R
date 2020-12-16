@@ -43,8 +43,26 @@ all_text %>%
   geom_col() +
   coord_flip() +
   guides(fill = FALSE) +
-  labs(x = "Word", y = "Count") +
+  labs(x = "Word", 
+       y = "Count", 
+       title = "Top 10 most commonly occuring words in The Time Machine") +
+  theme_minimal()
+
+ggsave("Top_10_Time_Machine_Words.jpg", width = 7, height = 3.6)
+
+all_text %>%
+  filter(title == "The War of the Worlds") %>%
+  count(word, sort = TRUE) %>%
+  top_n(10) %>%
+  ggplot(aes(x = reorder(word, n), y = n, fill = word)) +
+  geom_col() +
+  coord_flip() +
+  guides(fill = FALSE) +
+  labs(x = "Word", 
+       y = "Count",
+       title = "Top 10 most commonly occuring words in The War of the Worlds") +
   theme_minimal()
          
+ggsave("Top_10_War_Worlds_Words.jpg", width = 7, height = 3.6)
 
 
