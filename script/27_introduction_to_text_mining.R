@@ -107,11 +107,9 @@ book_words %>%
   select(-n, -total)
 
 book_words %>%
-  mutate(proportion = n/total) %>%
-  group_by(title) %>%
-  arrange(desc(title, proportion)) %>%
-  top_n(10) %>%
-  ggplot(aes(x = proportion, y = n)) +
-  geom_col() +
-  facet_wrap(~ title)
+  ggplot(aes(x = n/total, fill = title)) +
+  geom_histogram(show.legend = FALSE) +
+  xlim(NA, 0.0009) +
+  facet_wrap(~title, ncol = 2, scales = "free")
 
+ggsave("Zipf's Law.jpg", width = 7, height = 3.6)
