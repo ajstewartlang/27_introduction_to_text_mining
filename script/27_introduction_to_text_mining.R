@@ -65,4 +65,53 @@ all_text %>%
          
 ggsave("Top_10_War_Worlds_Words.jpg", width = 7, height = 3.6)
 
+get_sentiments("bing")
+
+all_text_sentiments <- all_text %>%
+  inner_join(get_sentiments("bing"))
+
+head(all_text_sentiments)
+
+all_text_sentiments %>%
+  filter(title == "The War of the Worlds") %>%
+  count(word, sentiment, sort = TRUE) %>%
+  top_n(25) %>%
+  mutate(n = ifelse(sentiment == "negative", -n, n)) %>%
+  #mutate(word = reorder(word, n)) %>%
+  ggplot(aes(x = reorder(word, n), y = n, fill = sentiment)) +
+  geom_col() +
+  coord_flip() +
+  labs(title = "Sentiment Analysis of Top 25 Words in The War of the Worlds", 
+       x = "Word",
+       y = "Count") 
+
+ggsave("Top_25_War_Worlds_Sentiments.jpg", width = 7, height = 3.6)
+
+# Examining the proportion of useage of each word in each book
+
+book_words <- all_text %>% 
+  group_by(title) %>% 
+  count(title, word, sort = TRUE)
+
+total_words <- book_words %>% 
+  group_by(title) %>% 
+  summarise(total = sum(n))
+
+book_words <- left_join(book_words, total_words)
+
+book_words %>%
+  mutate(proportion = n/total) %>%
+  group_by(title) %>%
+  arrange(desc(title, proportion)) %>%
+  top_n(3) %>%
+  select(-n, -total)
+
+book_words %>%
+  mutate(proportion = n/total) %>%
+  group_by(title) %>%
+  arrange(desc(title, proportion)) %>%
+  top_n(10) %>%
+  ggplot(aes(x = proportion, y = n)) +
+  geom_col() +
+  facet_wrap(~ title)
 
