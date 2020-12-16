@@ -2,6 +2,8 @@ library(tidyverse)
 library(tidytext)
 library(gutenbergr)
 
+# Reading in the content of the 4 books 
+
 titles <- c("The War of the Worlds",
             "The Time Machine",
             "Twenty Thousand Leagues under the Sea",
@@ -19,11 +21,15 @@ books %>%
 
 books$text[31:40]
 
+# Unnesting the words
+
 all_text <- books %>%
   unnest_tokens(word, text) %>%
   anti_join(stop_words)
 
 all_text
+
+# Top 10 words in The Time Machine and The War of the Worlds
 
 all_text %>%
   filter(title == "The Time Machine") %>%
@@ -113,3 +119,16 @@ book_words %>%
   facet_wrap(~title, ncol = 2, scales = "free")
 
 ggsave("Zipf's Law.jpg", width = 7, height = 3.6)
+
+# Term Frequency and Inverse Document Frequency
+
+book_words_tf_idf <- book_words %>%
+  bind_tf_idf(word, title, n)
+
+book_words_tf_idf %>%
+  top_n(15, tf_idf) %>%
+  ggplot(aes(x = reorder(word, tf_idf), y = tf_idf, fill = title)) +
+  geom_col(show.legend = FALSE) +
+  labs(x = NULL, y = "tf_idf") +
+  facet_wrap(~ title, ncol = 2, scales = "free") +
+  coord_flip()
