@@ -28,13 +28,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Slides
 
-You can download the slides in .odp format by clicking [here](../slides/glm_anova_pt1_video1.odp) and in .pdf format by clicking on the image below. 
+You can download the slides in .odp format by clicking [here](../slides/introduction_to_text_mining.odp) and in .pdf format by clicking on the image below. 
 
 &nbsp;&nbsp;
 
 <center>
 
-[![Link to slides](../images/glm_anova_pt1_video1.png){width=75%}](../slides/glm_anova_pt1_video1.pdf)
+[![Link to slides](../images/introduction_to_text_mining.png){width=75%}](../slides/introduction_to_text_mining.pdf)
 
 </center>
 
@@ -42,11 +42,15 @@ You can download the slides in .odp format by clicking [here](../slides/glm_anov
 
 # The Text Mining with R Book
 
+&nbsp;&nbsp;
+
 <center>
 
-[![Link to book](../images/coer.png){width=75%}](https://www.tidytextmining.com/) 
+[![Link to book](../images/cover.png){width=30%}](https://www.tidytextmining.com/) 
 
 </center>
+
+&nbsp;&nbsp;
 
 # Your challenge
 
