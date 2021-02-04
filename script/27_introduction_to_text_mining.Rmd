@@ -43,6 +43,8 @@ You can download the slides in .odp format by clicking [here](../slides/introduc
 
 # The Text Mining with R Book
 
+This is a great book for introducing you to using R for text mining. You can click on the image below to be taken to an electronic version of the book. Both [Julia Silge](https://twitter.com/juliasilge) and [David Robinson](https://twitter.com/drob) are very active on Twitter and well worth following for all things R related.
+
 &nbsp;&nbsp;
 
 <center>
@@ -55,7 +57,7 @@ You can download the slides in .odp format by clicking [here](../slides/introduc
 
 # Your challenge
 
-Have a look at the [Project Gutenberg library}(https://www.gutenberg.org/) where you can access over 60,000 free eBooks. You could download just the one book of your choice, a set of books by the same author, or a set of books by different authors. Using the material in the slides and videos from this session, conduct text analysis on your download. Maybe start with the most common words in a book or set of books. If you've downloaded a set of books by the same author you could work out the tf-idf measure for each of the books. Or if you downloaded books by different authors, maybe you could examine the tf-idf measure for each of the authors. Perhaps different authors have different words or phrases that the favour over others...
+Have a look at the [Project Gutenberg library](https://www.gutenberg.org/) where you can access over 60,000 free eBooks. You could download just the one book of your choice, a set of books by the same author, or a set of books by different authors. Using the material in the slides from this session, conduct text analysis on your download. Maybe start with the most common words in a book or set of books. If you've downloaded a set of books by the same author you could work out the tf-idf measure for each of the books. Or if you downloaded books by different authors, maybe you could examine the tf-idf measure for each of the authors. Perhaps different authors have different words or phrases that the favour over others...
 
 ## Improve this Workshop
 
