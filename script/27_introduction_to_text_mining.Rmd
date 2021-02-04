@@ -26,6 +26,20 @@ knitr::opts_chunk$set(echo = TRUE)
 </center>
 &nbsp;&nbsp;
 
+## Slides
+
+You can download the slides in .odp format by clicking [here](../slides/glm_anova_pt1_video1.odp) and in .pdf format by clicking on the image below. 
+
+&nbsp;&nbsp;
+
+<center>
+
+[![Link to slides](../images/glm_anova_pt1_video1.png){width=75%}](../slides/glm_anova_pt1_video1.pdf)
+
+</center>
+
+&nbsp;&nbsp;
+
 # heading
 
 
