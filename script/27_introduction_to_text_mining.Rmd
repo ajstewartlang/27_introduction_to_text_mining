@@ -40,8 +40,13 @@ You can download the slides in .odp format by clicking [here](../slides/glm_anov
 
 &nbsp;&nbsp;
 
-# heading
+# The Text Mining with R Book
 
+<center>
+
+[![Link to book](../images/coer.png){width=75%}](https://www.tidytextmining.com/) 
+
+</center>
 
 # Your challenge
 
