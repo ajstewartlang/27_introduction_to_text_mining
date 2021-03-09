@@ -53,7 +53,7 @@ all_text %>%
   guides(fill = FALSE) +
   labs(x = "Word", 
        y = "Count", 
-       title = "Top 10 most commonly occuring words in The Time Machine") +
+       title = "Top 10 most commonly occurring words in The Time Machine") +
   theme_minimal()
 
 ggsave("Top_10_Time_Machine_Words.jpg", width = 7, height = 3.6)
@@ -68,7 +68,7 @@ all_text %>%
   guides(fill = FALSE) +
   labs(x = "Word", 
        y = "Count",
-       title = "Top 10 most commonly occuring words in The War of the Worlds") +
+       title = "Top 10 most commonly occurring words in The War of the Worlds") +
   theme_minimal()
          
 ggsave("Top_10_War_Worlds_Words.jpg", width = 7, height = 3.6)
