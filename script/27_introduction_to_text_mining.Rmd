@@ -17,6 +17,20 @@ knitr::opts_chunk$set(echo = TRUE)
 
 In any set of texts (such as books, interview transcripts etc.) it’s often useful to be able to quantify key aspects of the constituent parts (e.g., words, phrases). For example, some types of language may be more common in one interview transcript vs. another, and it can be useful to visualise the content of a particular text to compare it with others. In this session we are going to examine how to the `{tidytext}` package in R to engage in some simple text analysis. We will examine how to count the occurrences of words in a text, engage in a basic sentiment analysis to examine what kinds of sentiments might be most common in a text, as well as using measures such as term frequency-inverse document frequency as a way of understanding what words (or phrases) are most uniquely associated with a text (compared to another set of texts). The material I'm going to cover is very much based on the fantastic "Text Mining Wirh R" book by Julia Silge and David Robinson. Scroll down to find a link to the book - or better still, buy it!
 
+## Slides
+
+You can download the slides in .odp format by clicking [here](../slides/introduction_to_text_mining.odp) and in .pdf format by clicking on the image below. 
+
+&nbsp;&nbsp;
+
+<center>
+
+[![Link to slides](../images/introduction_to_text_mining.png){width=75%}](../slides/introduction_to_text_mining.pdf)
+
+</center>
+
+&nbsp;&nbsp;
+
 ## Introduction
 
 &nbsp;&nbsp;
@@ -123,11 +137,11 @@ all_text_sentiments %>%
        y = "Count") 
 ```
 
-## Proportion of usage of each word in each book
+## Word Proportions
 
 In addition to looking at the frequencies of occurrence of each word in each book, we can 'normalise' things by looking at what usage proportion is associated with each word in each book. A simple frequency measure becomes distorted as the length of a book increases - calculating the proportions of each word in each book gets round this issue. 
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 book_words <- all_text %>% 
   group_by(title) %>% 
   count(title, word, sort = TRUE)
@@ -185,14 +199,14 @@ book_words_tf_idf %>%
 
 Up to this point we have been focusing on individual words. When we un-nested our texts originally, we did so on a word-by-word basis. Below we are going to un-nest as bigrams (i.e., word pairs). This can be used to tell us which words typically occur with which other words. We can plot a network graph to demonstrate this. We'll need to install two extra packages first.
 
-```{r}
-#library(igraph)
+```{r, message=FALSE, warning=FALSE}
+library(igraph)
 library(ggraph)
 ```
 
 The code below un-nests via bigrams. If you want to, you could modify it to examine word triplets. Just change the n value on line 3, and then create an extra word column in the `separate()` function call on line 4.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 wotw_bigrams <- books %>% 
   filter(title == "The War of the Worlds") %>%
   unnest_tokens(bigram, text, token = "ngrams", n = 2) %>%
@@ -215,21 +229,7 @@ ggraph(bigram_graph, layout = "fr") +
   theme_void() 
 ```
 
-## Slides
-
-You can download the slides in .odp format by clicking [here](../slides/introduction_to_text_mining.odp) and in .pdf format by clicking on the image below. 
-
-&nbsp;&nbsp;
-
-<center>
-
-[![Link to slides](../images/introduction_to_text_mining.png){width=75%}](../slides/introduction_to_text_mining.pdf)
-
-</center>
-
-&nbsp;&nbsp;
-
-# The Text Mining with R Book
+## The Text Mining with R Book
 
 This is a great book for introducing you to using R for text mining. You can click on the image below to be taken to an electronic version of the book. Both [Julia Silge](https://twitter.com/juliasilge) and [David Robinson](https://twitter.com/drob) are very active on Twitter and well worth following for all things R related.
 
