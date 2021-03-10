@@ -17,14 +17,203 @@ knitr::opts_chunk$set(echo = TRUE)
 
 In any set of texts (such as books, interview transcripts etc.) it’s often useful to be able to quantify key aspects of the constituent parts (e.g., words, phrases). For example, some types of language may be more common in one interview transcript vs. another, and it can be useful to visualise the content of a particular text to compare it with others. In this session we are going to examine how to the `{tidytext}` package in R to engage in some simple text analysis. We will examine how to count the occurrences of words in a text, engage in a basic sentiment analysis to examine what kinds of sentiments might be most common in a text, as well as using measures such as term frequency-inverse document frequency as a way of understanding what words (or phrases) are most uniquely associated with a text (compared to another set of texts). The material I'm going to cover is very much based on the fantastic "Text Mining Wirh R" book by Julia Silge and David Robinson. Scroll down to find a link to the book - or better still, buy it!
 
+## Introduction
+
 &nbsp;&nbsp;
 
 <center>
 
-<iframe width="560" height="315" src="https://youtube.com/embed/" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://youtube.com/embed/HjF98JryayQ" frameborder="0" allowfullscreen></iframe>
 
 </center>
 &nbsp;&nbsp;
+
+To use the `{tidytext}` package we'll load it alongside the `{tidyverse}` and the `{gutenbergr}` libraries.
+
+```{r, message=FALSE}
+library(tidyverse)
+library(tidytext)
+library(gutenbergr)
+```
+
+Once we have loaded the appropriate packages into our session, we'll then download the four HG Wells books we're interested in and map them onto the variable `books`. You can go to the [Project Gutenberg](https://www.gutenberg.org/) site directly if you like to see what other books are available to download.
+
+```{r}
+titles <- c("The War of the Worlds",
+            "The Time Machine",
+            "Twenty Thousand Leagues under the Sea",
+            "The Invisible Man: A Grotesque Romance")
+
+books <- gutenberg_works(title %in% titles) %>%
+  gutenberg_download(meta_fields = "title")
+```
+
+Once the books are downloaded, we need to un-nest the words in each line so that the texts of the books in our tibble are in tidy or long format. We are also going to remove the "stop words". You can view the `stop_words` with `view(stop_words)` if you are interested in seeing which words are included. As this is just a vector of words, you can also add other words to it if you like.
+
+```{r}
+all_text <- books %>%
+  unnest_tokens(word, text) %>%
+  anti_join(stop_words)
+
+all_text
+```
+
+As our tibble is now in tidy format, we can easily extract and visualise summary statistics of the 10 most common words in each of the books in our tibble.
+
+```{r}
+all_text %>%
+  filter(title == "The Time Machine") %>%
+  count(word, sort = TRUE) %>%
+  top_n(10)
+```
+
+```{r}
+all_text %>%
+  filter(title == "The Time Machine") %>%
+  count(word, sort = TRUE) %>%
+  top_n(10) %>%
+  ggplot(aes(x = reorder(word, n), y = n, fill = word)) +
+  geom_col() +
+  coord_flip() +
+  guides(fill = FALSE) +
+  labs(x = "Word", 
+       y = "Count", 
+       title = "Top 10 most commonly occurring words in The Time Machine") +
+  theme_minimal()
+```
+
+Have a go at changing the code above to summarise and visualise the top 10 words in one of the other books we have downloaded.
+
+## Sentiment Analysis
+
+&nbsp;&nbsp;
+
+<center>
+
+<iframe width="560" height="315" src="https://youtube.com/embed/xrtoxQ4VtZA" frameborder="0" allowfullscreen></iframe>
+
+</center>
+&nbsp;&nbsp;
+
+In this section we're going to look at sentiment analysis. There are four built-in sentiment database in the `{tidytext}` package that you can access with `get_sentiments()`. We're going to use the `bing` database which contains around 7,000 words coded for whether their sentiments are positive or negative.
+
+First we're going to 'join' the tidy tibble containing the text of the four books we have downloaded with the sentiment coding associated with each of the words in our tibble. 
+
+```{r}
+get_sentiments("bing")
+
+all_text_sentiments <- all_text %>%
+  inner_join(get_sentiments("bing"))
+```
+
+This gives us a new tibble that contains the text, plus a new column corresponding to the sentiment of each word in the text. We can plot the top 25 most common words in the book "The War of the Worlds" via `{ggplot2}` using the code below.
+
+```{r}
+all_text_sentiments %>%
+  filter(title == "The War of the Worlds") %>%
+  count(word, sentiment, sort = TRUE) %>%
+  top_n(25) %>%
+  mutate(n = ifelse(sentiment == "negative", -n, n)) %>%
+  #mutate(word = reorder(word, n)) %>%
+  ggplot(aes(x = reorder(word, n), y = n, fill = sentiment)) +
+  geom_col() +
+  coord_flip() +
+  labs(title = "Sentiment Analysis of Top 25 Words in The War of the Worlds", 
+       x = "Word",
+       y = "Count") 
+```
+
+## Proportion of usage of each word in each book
+
+In addition to looking at the frequencies of occurrence of each word in each book, we can 'normalise' things by looking at what usage proportion is associated with each word in each book. A simple frequency measure becomes distorted as the length of a book increases - calculating the proportions of each word in each book gets round this issue. 
+
+```{r}
+book_words <- all_text %>% 
+  group_by(title) %>% 
+  count(title, word, sort = TRUE)
+
+total_words <- book_words %>% 
+  group_by(title) %>% 
+  summarise(total = sum(n))
+
+book_words <- left_join(book_words, total_words)
+
+book_words %>%
+  mutate(proportion = n/total) %>%
+  group_by(title) %>%
+  arrange(desc(title, proportion)) %>%
+  top_n(3) %>%
+  select(-n, -total)
+
+book_words %>%
+  ggplot(aes(x = n/total, fill = title)) +
+  geom_histogram(show.legend = FALSE) +
+  xlim(NA, 0.0009) +
+  facet_wrap(~title, ncol = 2, scales = "free")
+```
+
+You can see from the above that the proportion of each word in each book roughly obeys Zipf's power law.
+
+## Term Frequency-Inverse Document Frequency
+
+&nbsp;&nbsp;
+
+<center>
+
+<iframe width="560" height="315" src="https://youtube.com/embed/BBr7cCII7yg" frameborder="0" allowfullscreen></iframe>
+
+</center>
+&nbsp;&nbsp;
+
+The Term Frequency-Inverse Document Frequency measures gives us insight into which words are unique associated with one book (or text) over another. This can be useful if we want to know what words characterise one book relative to others. Below, we work out the measure using the `bind_tf_idf()` function in `{tidytext}`. 
+
+```{r}
+book_words_tf_idf <- book_words %>%
+  bind_tf_idf(word, title, n)
+
+book_words_tf_idf %>%
+  top_n(15, tf_idf) %>%
+  ggplot(aes(x = reorder(word, tf_idf), y = tf_idf, fill = title)) +
+  geom_col(show.legend = FALSE) +
+  labs(x = NULL, y = "Term Frequency-Inverse Document Frequency") +
+  coord_flip() +
+  facet_wrap(~ title, ncol = 2, scales = "free") +
+  theme(text = element_text(size = 8))
+```
+
+## N-gram Analysis
+
+Up to this point we have been focusing on individual words. When we un-nested our texts originally, we did so on a word-by-word basis. Below we are going to un-nest as bigrams (i.e., word pairs). This can be used to tell us which words typically occur with which other words. We can plot a network graph to demonstrate this. We'll need to install two extra packages first.
+
+```{r}
+#library(igraph)
+library(ggraph)
+```
+
+The code below un-nests via bigrams. If you want to, you could modify it to examine word triplets. Just change the n value on line 3, and then create an extra word column in the `separate()` function call on line 4.
+
+```{r}
+wotw_bigrams <- books %>% 
+  filter(title == "The War of the Worlds") %>%
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) %>%
+  separate(col = bigram, into = c("word1", "word2", sep = " ")) %>%
+  filter(!word1 %in% stop_words$word) %>%
+  filter(!word2 %in% stop_words$word) %>%
+  count(word1, word2, sort = TRUE)
+
+bigram_graph <- wotw_bigrams %>%
+  filter(n > 5) %>%
+  graph_from_data_frame()
+
+set.seed(1234)
+ggraph(bigram_graph, layout = "fr") +
+  geom_edge_link(alpha = .25) +
+  geom_node_point(alpha = .25) +
+  geom_node_text(aes(label = name), vjust = -.1, hjust = 1.25, size = 3) +
+  guides(size = FALSE) +
+  xlim(10, 22) +
+  theme_void() 
+```
 
 ## Slides
 
